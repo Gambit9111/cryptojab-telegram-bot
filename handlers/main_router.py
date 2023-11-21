@@ -39,7 +39,7 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
 
 # ! /start
 @router.message(CommandStart())
-async def cmd_start(message: Message, session: AsyncSession, state: FSMContext):
+async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) -> None:
     
     # ? clear the state whenever user /start the bot
     await state.clear()
