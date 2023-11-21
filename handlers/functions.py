@@ -44,3 +44,4 @@ async def create_user(telegram_id: int, session: AsyncSession, User: User) -> No
         await session.commit()
     except Exception as e:
         print("function create_user ERROR", e)
+

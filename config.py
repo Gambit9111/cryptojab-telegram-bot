@@ -12,6 +12,10 @@ WEB_SERVER_PORT = os.getenv("WEB_SERVER_PORT")
 STRIPE_PRODUCT_1_ID = os.getenv("STRIPE_PRODUCT_1_ID")
 STRIPE_PRODUCT_2_ID = os.getenv("STRIPE_PRODUCT_2_ID")
 STRIPE_PRODUCT_3_ID = os.getenv("STRIPE_PRODUCT_3_ID")
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+STRIPE_CHECKOUT_SUCCESS_URL = os.getenv("STRIPE_CHECKOUT_SUCCESS_URL")
+STRIPE_CHECKOUT_CANCEL_URL = os.getenv("STRIPE_CHECKOUT_CANCEL_URL")
+COINBASE_API_KEY = os.getenv("COINBASE_API_KEY")
 
 if TELEGRAM_BOT_TOKEN is None:
     raise ValueError("Please set TELEGRAM_BOT_TOKEN environment variable")
@@ -33,5 +37,13 @@ if STRIPE_PRODUCT_2_ID is None:
     raise ValueError("Please set STRIPE_PRODUCT_2_ID environment variable")
 if STRIPE_PRODUCT_3_ID is None:
     raise ValueError("Please set STRIPE_PRODUCT_3_ID environment variable")
+if STRIPE_API_KEY is None:
+    raise ValueError("Please set STRIPE_API_KEY environment variable")
+if STRIPE_CHECKOUT_SUCCESS_URL is None:
+    raise ValueError("Please set STRIPE_CHECKOUT_SUCCESS_URL environment variable")
+if STRIPE_CHECKOUT_CANCEL_URL is None:
+    raise ValueError("Please set STRIPE_CHECKOUT_CANCEL_URL environment variable")
+if COINBASE_API_KEY is None:
+    raise ValueError("Please set COINBASE_API_KEY environment variable")
 else:
     print("Environment variables are set")
