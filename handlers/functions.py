@@ -14,16 +14,18 @@ async def user_exists(telegram_id: int, session: AsyncSession, User: User) -> bo
     Returns:
         Boolean: False if user does not exist, True if user exists
     """
-    
-    sql = select(User).where(User.telegram_id == telegram_id)
-    result = await session.execute(sql)
-    user = result.scalars().first()
-    
-    if user is None:
-        return False
-    
-    if user is not None:
-        return True
+    try:
+        sql = select(User).where(User.telegram_id == telegram_id)
+        result = await session.execute(sql)
+        user = result.scalars().first()
+        
+        if user is None:
+            return False
+        
+        if user is not None:
+            return True
+    except Exception as e:
+        print("function user_exists ERROR", e)
 
 
 async def create_user(telegram_id: int, session: AsyncSession, User: User) -> None:
@@ -37,6 +39,8 @@ async def create_user(telegram_id: int, session: AsyncSession, User: User) -> No
     Returns:
         None
     """
-
-    await session.merge(User(telegram_id=telegram_id))
-    await session.commit()
+    try:
+        await session.merge(User(telegram_id=telegram_id))
+        await session.commit()
+    except Exception as e:
+        print("function create_user ERROR", e)
