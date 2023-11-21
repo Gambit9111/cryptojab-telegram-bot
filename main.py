@@ -17,7 +17,7 @@ from config import (
                     WEB_SERVER_HOST,
                     WEB_SERVER_PORT
                     )
-from handlers import commands
+from handlers import main_router, new_member_router
 from middlewares import DbSessionMiddleware
 from ui_commands import set_ui_commands
 
@@ -55,7 +55,8 @@ def main() -> None:
     dp = Dispatcher()
     dp.update.middleware(DbSessionMiddleware(session_pool=sessionmaker))
     dp.callback_query.middleware(CallbackAnswerMiddleware())
-    dp.include_router(commands.router)
+    dp.include_router(main_router.router)
+    dp.include_router(new_member_router.router)
     
     try:
         aiohttp_logger = logging.getLogger("aiohttp.access")
