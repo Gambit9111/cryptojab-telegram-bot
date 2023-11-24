@@ -72,9 +72,10 @@ async def confirm_payment(message: Message, state: FSMContext, bot: Bot):
     checkout_message = await message.answer(text=f"Checkout url {checkout_url}")
     await state.clear()
     
-    # delete the checkout url after 2 minutes
-    await asyncio.sleep(60)
+    # delete the checkout url after 1 minute
+    await asyncio.sleep(45)
     await bot.delete_message(chat_id=checkout_message.chat.id, message_id=checkout_message.message_id)
+    await message.answer(text="Type /join to get the invite link after your payment has been confirmed!", reply_markup=ReplyKeyboardRemove())
 
 # ? will run if NEW MEMBER choose a confirmation message that does not exist
 @router.message(MemberStates.new_member_generate_payment_link)

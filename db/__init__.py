@@ -1,7 +1,7 @@
 from .base import Base
-from .models import User 
+from .models import Users 
 
 __all__ = [
     "Base",
-    "User"
+    "Users"
 ]

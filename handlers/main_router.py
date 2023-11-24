@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.models import User
+from db.models import Users
 
 from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
 
@@ -27,10 +27,6 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
     """
     Allow user to cancel any action
     """
-    current_state = await state.get_state()
-    if current_state is None:
-        return
-
     await state.clear()
     await message.answer(
         "Your selections was canceled, please /start again to make new selections.",
@@ -55,7 +51,7 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
 
         await state.set_state(MemberStates.admin_member) # ? set the state to admin_member
     
-    elif await user_exists(message.from_user.id, session, User) == False:
+    elif await user_exists(message.from_user.id, session, Users) == False:
         # ! New member logic
         
         await message.answer(
@@ -69,7 +65,8 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
         # ! Active member logic
         
         await message.answer(
-            text="Hello, you are a active user!",
+            text="Hello, you are premium user! Type /status to see your subscription status. Type /join to receive invite link.",
             reply_markup=ReplyKeyboardRemove())
         
-        await state.set_state(MemberStates.active_member_view_sub_info) # ? set the state to active_member
+        await state.clear()
+

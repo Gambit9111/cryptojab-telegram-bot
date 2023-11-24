@@ -73,7 +73,7 @@ async def create_checkout_session(telegram_id: int, subscription_type: str, paym
             "name": f"Subscription for {duration} days",
             "description": telegram_id,
             "local_price": {
-                "amount": price,
+                "amount": 0.1,
                 "currency": "USD"
             },
             "pricing_type": "fixed_price",
