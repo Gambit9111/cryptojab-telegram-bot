@@ -32,6 +32,34 @@ async def user_exists(telegram_id: int, session: AsyncSession, Users: Users) -> 
     except Exception as e:
         print("function user_exists ERROR", e)
 
+async def can_generate_invite_link(telegram_id: int, session: AsyncSession, Users: Users) -> bool:
+    """
+    Description:
+        check if the user with given telegram_id can generate an invite link
+    Params: 
+        telegram_id (int): telegram_id of the user
+        session (AsyncSession): AsyncSession object
+        User (User): User model
+    Returns:
+        Boolean: False if user cannot generate an invite link, True if user can generate an invite link
+    """
+    try:
+        sql = select(Users).where(Users.telegram_id == telegram_id)
+        result = await session.execute(sql)
+        user: Users = result.scalars().first()
+        
+        if user is None:
+            return False
+        
+        if user is not None:
+            if user.generated_invite_link is True:
+                return False
+            
+            if user.generated_invite_link is False:
+                return True
+    except Exception as e:
+        print("function can_generate_invite_link ERROR", e)
+
 
 async def generate_invite_link(telegram_id: int, session: AsyncSession, Users: Users, bot: Bot) -> str:
     """
@@ -49,22 +77,17 @@ async def generate_invite_link(telegram_id: int, session: AsyncSession, Users: U
         result = await session.execute(sql)
         user: Users = result.scalars().first()
         
-        if user is None or user.generated_invite_link is True:
-            return "You have already generated an invite link!"
+        await bot.unban_chat_member(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, user_id=telegram_id)
+        # generate new invite link
+        link_expire_date = datetime.now() + timedelta(minutes=60)
+        invite = await bot.create_chat_invite_link(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, name=str(telegram_id), member_limit=1, expire_date=link_expire_date)
+        invite_link = invite.invite_link
         
-        if user is not None:
-            
-            await bot.unban_chat_member(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, user_id=telegram_id)
-            # generate new invite link
-            link_expire_date = datetime.now() + timedelta(minutes=60)
-            invite = await bot.create_chat_invite_link(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, name=str(telegram_id), member_limit=1, expire_date=link_expire_date)
-            invite_link = invite.invite_link
-            
-            # update the database
-            user.generated_invite_link = True
-            await session.commit()
-            
-            return invite_link
+        # update the database
+        user.generated_invite_link = True
+        await session.commit()
+        
+        return invite_link
         
     except Exception as e:
         print("function generate_invite_link ERROR", e)
