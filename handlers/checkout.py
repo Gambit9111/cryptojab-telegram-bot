@@ -1,13 +1,13 @@
 import stripe
-from coinbase_commerce.client import Client
+# from coinbase_commerce.client import Client
 
 from data import subscriptions, payments
-from config import STRIPE_API_KEY, STRIPE_CHECKOUT_SUCCESS_URL, STRIPE_CHECKOUT_CANCEL_URL, COINBASE_API_KEY
+from config import STRIPE_API_KEY, STRIPE_CHECKOUT_SUCCESS_URL, STRIPE_CHECKOUT_CANCEL_URL #, COINBASE_API_KEY
 
 stripe.api_key = STRIPE_API_KEY
 
-coinbase_base_url = "https://commerce.coinbase.com/checkout/"
-coinbase_client = Client(api_key=COINBASE_API_KEY)
+# coinbase_base_url = "https://commerce.coinbase.com/checkout/"
+# coinbase_client = Client(api_key=COINBASE_API_KEY)
 
 async def create_checkout_session(telegram_id: int, subscription_type: str, payment_method: str) -> str:
     """creates new checkout session for the user
@@ -66,23 +66,23 @@ async def create_checkout_session(telegram_id: int, subscription_type: str, paym
         return stripe_checkout_session["url"] # ? return the URL of the checkout session
     
     # ? coinbase checkout session
-    elif payment_method == "Coinbase":
-        print("creating checkout session", telegram_id + price, duration, stripe_product_id, payment_method)
+    # elif payment_method == "Coinbase":
+    #     print("creating checkout session", telegram_id + price, duration, stripe_product_id, payment_method)
 
-        coinbase_checkout_info = {
-            "name": f"Subscription for {duration} days",
-            "description": telegram_id,
-            "local_price": {
-                "amount": 0.1,
-                "currency": "USD"
-            },
-            "pricing_type": "fixed_price",
-            "requested_info": ["email"]
-        }
+    #     coinbase_checkout_info = {
+    #         "name": f"Subscription for {duration} days",
+    #         "description": telegram_id,
+    #         "local_price": {
+    #             "amount": 0.1,
+    #             "currency": "USD"
+    #         },
+    #         "pricing_type": "fixed_price",
+    #         "requested_info": ["email"]
+    #     }
         
-        coinbase_checkout_session = coinbase_client.checkout.create(**coinbase_checkout_info)
+    #     coinbase_checkout_session = coinbase_client.checkout.create(**coinbase_checkout_info)
         
-        return coinbase_base_url + coinbase_checkout_session["id"] # ? return the URL of the checkout session
+    #     return coinbase_base_url + coinbase_checkout_session["id"] # ? return the URL of the checkout session
     
     else:
         raise ValueError("Plese check your data.py file, something aint right with the payment_method")

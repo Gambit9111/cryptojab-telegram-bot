@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 
 from config import TELEGRAM_PREMIUM_CHANNEL_ID, TELEGRAM_ADMIN_ID
 
+from .checkout import stripe
+
 
 async def user_exists(telegram_id: int, session: AsyncSession, Users: Users) -> bool:
     """
@@ -64,7 +66,7 @@ async def can_generate_invite_link(telegram_id: int, session: AsyncSession, User
 async def generate_invite_link(telegram_id: int, session: AsyncSession, Users: Users, bot: Bot) -> str:
     """
     Description:
-        generate an invite link for the user with given telegram_id
+        generate an invite link for the user with given telegram_id, send the notification to admin
     Params: 
         telegram_id (int): telegram_id of the user
         session (AsyncSession): AsyncSession object
@@ -87,8 +89,76 @@ async def generate_invite_link(telegram_id: int, session: AsyncSession, Users: U
         user.generated_invite_link = True
         await session.commit()
         
+        await bot.send_message(chat_id=TELEGRAM_ADMIN_ID, text=f"User with telegram_id {telegram_id} generated an invite link")
         return invite_link
         
     except Exception as e:
         print("function generate_invite_link ERROR", e)
 
+
+async def get_sub_duration(telegram_id: int, session: AsyncSession, Users: Users) -> datetime:
+    """
+    Description:
+        get the subscription duration for the user with given telegram_id
+    Params: 
+        telegram_id (int): telegram_id of the user
+        session (AsyncSession): AsyncSession object
+        User (User): User model
+    Returns:
+        sub_duration (int): subscription duration for the user
+    """
+    try:
+        sql = select(Users).where(Users.telegram_id == telegram_id)
+        result = await session.execute(sql)
+        user: Users = result.scalars().first()
+        
+        # calculate how many days user has left
+        sub_duration = user.valid_until - datetime.utcnow()
+        return sub_duration.days
+        
+    except Exception as e:
+        print("function get_sub_duration ERROR", e)
+
+async def cancel_subscription(telegram_id: int, session: AsyncSession, Users: Users, bot: Bot) -> None:
+    """
+    Description:
+        cancel users subscription, kick him out of the group and delete from the database, cancel subscription in stripe if the payment method was stripe
+    Params: 
+        telegram_id (int): telegram_id of the user
+        session (AsyncSession): AsyncSession object
+        User (User): User model
+    Returns:
+        None
+    """
+    try:
+        sql = select(Users).where(Users.telegram_id == telegram_id)
+        result = await session.execute(sql)
+        user: Users = result.scalars().first()
+        
+        # cancel subscription in stripe
+        if user.payment_method == "stripe":
+            stripe.Subscription.delete(user.subscription_id)
+        
+        await bot.unban_chat_member(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, user_id=telegram_id)
+        # delete user from the database
+        await session.delete(user)
+        await session.commit()
+        
+        await bot.send_message(chat_id=TELEGRAM_ADMIN_ID, text=f"User with telegram_id {telegram_id} canceled his subscription")
+        
+    except Exception as e:
+        print("function generate_invite_link ERROR", e)
+
+def is_admin(telegram_id: int) -> bool:
+    """
+    Description:
+        check if the user with given telegram_id is admin
+    Params: 
+        telegram_id (int): telegram_id of the user
+    Returns:
+        Boolean: False if user is not admin, True if user is admin
+    """
+    if telegram_id == TELEGRAM_ADMIN_ID:
+        return True
+    else:
+        return False

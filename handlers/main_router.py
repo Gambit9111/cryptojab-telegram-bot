@@ -10,17 +10,15 @@ from db.models import Users
 
 from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
 
-from data import WELCOME_MESSAGE, available_subscription_types
+from data import WELCOME_MESSAGE, available_subscription_types, wait_message
 
 from .states import MemberStates
 
-from .functions import user_exists, can_generate_invite_link, generate_invite_link
+from .functions import user_exists, can_generate_invite_link, generate_invite_link, get_sub_duration, is_admin
 
 import asyncio
 
 router = Router(name="main-router")
-
-isAdmin = False
 
 # ! /cancel
 @router.message(Command("cancel"))
@@ -41,10 +39,7 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
     
     # ? clear the state whenever user /start the bot
     await state.clear()
-    # * Send a welcome message to everyone who starts the bot
-    await message.answer(WELCOME_MESSAGE, reply_markup=ReplyKeyboardRemove())
-    
-    if isAdmin:
+    if is_admin(message.from_user.id):
         # ! Admin logic
         # TODO work in progress
         await message.answer(
@@ -53,24 +48,27 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
 
         await state.set_state(MemberStates.admin_member) # ? set the state to admin_member
     
-    elif await user_exists(message.from_user.id, session, Users) == False:
-        # ! New member logic
-        
-        await message.answer(
-            text="Choose subscription type:",
-            reply_markup=make_vertical_reply_keyboard(available_subscription_types))
-        
-        await state.set_state(MemberStates.new_member_choose_subscription_type) # ? set the state to new_member
-        
-    
     else:
-        # ! Active member logic
+        # * Send a welcome message to everyone who starts the bot
+        await message.answer(WELCOME_MESSAGE)
+    
+        if await user_exists(message.from_user.id, session, Users) == False:
+            # ! New member logic
+            
+            await message.answer(
+                text="Choose subscription type:",
+                reply_markup=make_vertical_reply_keyboard(available_subscription_types))
+            
+            await state.set_state(MemberStates.new_member_choose_subscription_type) # ? set the state to new_member
         
-        await message.answer(
-            text="Hello, you are premium user! Type /status to see your subscription status. Type /join to receive invite link.",
-            reply_markup=ReplyKeyboardRemove())
-        
-        await state.clear()
+        else:
+            # ! Active member logic
+            
+            await message.answer(
+                text="Hello, you are premium user! Type /status to see your subscription status. Type /join to receive invite link.",
+                reply_markup=ReplyKeyboardRemove())
+            
+            await state.clear()
 
 
 # ! /join
@@ -82,7 +80,7 @@ async def cmd_join(message: Message, session: AsyncSession, state: FSMContext, b
 
     await state.clear()
     # * Send a welcome message to everyone who starts the bot
-    await message.answer("Checking status of your membership...", reply_markup=ReplyKeyboardRemove())
+    await message.answer(wait_message, reply_markup=ReplyKeyboardRemove())
     
     if await user_exists(message.from_user.id, session, Users) == True:
         
@@ -104,3 +102,24 @@ async def cmd_join(message: Message, session: AsyncSession, state: FSMContext, b
         await message.answer("You do not have active subscription! Please /start the bot to purchase one.", reply_markup=ReplyKeyboardRemove())
         return
 
+# ! /status
+@router.message(Command("status"))
+@router.message(F.text.casefold() == "status")
+async def cmd_status(message: Message, session: AsyncSession, state: FSMContext, bot: Bot) -> None:
+
+    await state.clear()
+    # * Send a welcome message to everyone who starts the bot
+    await message.answer(wait_message, reply_markup=ReplyKeyboardRemove())
+
+    if await user_exists(message.from_user.id, session, Users) == True:
+        
+        sub_duration = await get_sub_duration(message.from_user.id, session, Users)
+        await message.answer(f"Your subscription will end in {sub_duration} days", reply_markup=make_vertical_reply_keyboard(["Cancel subscription"]))
+        
+        await state.set_state(MemberStates.active_member_cancel_subscription)
+        
+        
+    else:
+        
+        await message.answer("You do not have active subscription! Please /start the bot to purchase one.", reply_markup=ReplyKeyboardRemove())
+        return

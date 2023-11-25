@@ -17,7 +17,7 @@ from config import (
                     WEB_SERVER_HOST,
                     WEB_SERVER_PORT
                     )
-from handlers import main_router, new_member_router, catch_all_router
+from handlers import main_router, new_member_router, catch_all_router, cancel_sub_router
 from middlewares import DbSessionMiddleware
 from ui_commands import set_ui_commands
 
@@ -57,6 +57,7 @@ def main() -> None:
     dp.callback_query.middleware(CallbackAnswerMiddleware())
     dp.include_router(main_router.router)
     dp.include_router(new_member_router.router)
+    dp.include_router(cancel_sub_router.router)
     dp.include_router(catch_all_router.router)
     
     try:

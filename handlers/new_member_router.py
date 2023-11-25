@@ -44,12 +44,16 @@ async def payment_method_choosen(message: Message, state: FSMContext):
     state_data = await state.get_data()
     subscription_type = state_data.get("subscription_type")
     payment_method = state_data.get("payment_method")
-    
-    # send user a message with his subscription type and payment method
-    await message.answer(text=f"You have chosen {subscription_type} with {payment_method} payment method")
-    
-    await message.answer(text="Please confirm your selection", reply_markup=make_vertical_reply_keyboard(confirmation_messages))
-    await state.set_state(MemberStates.new_member_generate_payment_link)
+
+    if payment_method == "Coinbase (Crypto)":
+        await message.answer(text="Automated crypto payments are not supported yet, please contact administration if you wish to pay in cryptocurrencies...", reply_markup=ReplyKeyboardRemove())
+        await state.clear()
+    else:
+        # send user a message with his subscription type and payment method
+        await message.answer(text=f"You have chosen {subscription_type} with {payment_method} payment method")
+        
+        await message.answer(text="Please confirm your selection", reply_markup=make_vertical_reply_keyboard(confirmation_messages))
+        await state.set_state(MemberStates.new_member_generate_payment_link)
 
 # ? will run if NEW MEMBER choose a payment method that does not exist
 @router.message(MemberStates.new_member_choose_payment_method)
@@ -66,12 +70,12 @@ async def confirm_payment(message: Message, state: FSMContext, bot: Bot):
     state_data = await state.get_data()
     subscription_type = state_data.get("subscription_type")
     payment_method = state_data.get("payment_method")
-     
+        
     await message.answer(text="Selection confirmed, generating payment link...", reply_markup=ReplyKeyboardRemove())
     checkout_url = await create_checkout_session(message.from_user.id, subscription_type, payment_method)
     checkout_message = await message.answer(text=f"Checkout url {checkout_url}")
     await state.clear()
-    
+
     # delete the checkout url after 1min
     await asyncio.sleep(60)
     await bot.delete_message(chat_id=checkout_message.chat.id, message_id=checkout_message.message_id)

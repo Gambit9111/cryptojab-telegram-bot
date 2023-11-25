@@ -1,4 +1,4 @@
-from config import STRIPE_PRODUCT_1_ID, STRIPE_PRODUCT_2_ID, STRIPE_PRODUCT_3_ID
+from config import STRIPE_PRODUCT_1_ID, STRIPE_PRODUCT_2_ID, STRIPE_PRODUCT_3_ID, STRIPE_PRODUCT_4_ID
 
 WELCOME_MESSAGE = """
 
@@ -38,6 +38,13 @@ subscriptions = [
         "stripe_product_id": STRIPE_PRODUCT_3_ID,
         "button_text": "365 Days (365$)",
     },
+    {
+        "id": 4,
+        "price": 15,
+        "duration": 1,
+        "stripe_product_id": STRIPE_PRODUCT_4_ID,
+        "button_text": "1 Days (15$)",
+    },
 ]
 
 payments = [
@@ -54,6 +61,10 @@ payments = [
 ]
 
 confirmation_messages = ["Confirm", "Cancel"]
+
+cancel_subscription_confirmation_messages = ["Yes, cancel my subscription", "No, keep my subscription"]
+
+wait_message = "Checking status of your account. Please wait..."
 
 available_subscription_types = [subscription["button_text"] for subscription in subscriptions]
 available_subscription_types.append(confirmation_messages[1])
