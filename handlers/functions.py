@@ -149,7 +149,7 @@ async def cancel_subscription(telegram_id: int, session: AsyncSession, Users: Us
     except Exception as e:
         print("function generate_invite_link ERROR", e)
 
-def is_admin(telegram_id: int) -> bool:
+def is_admin(telegram_id: str) -> bool:
     """
     Description:
         check if the user with given telegram_id is admin

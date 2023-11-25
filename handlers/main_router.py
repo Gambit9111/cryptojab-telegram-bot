@@ -39,7 +39,7 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
     
     # ? clear the state whenever user /start the bot
     await state.clear()
-    if is_admin(message.from_user.id):
+    if is_admin(str(message.from_user.id)):
         # ! Admin logic
         # TODO work in progress
         await message.answer(
