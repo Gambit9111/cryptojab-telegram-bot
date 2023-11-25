@@ -10,7 +10,7 @@ from db.models import Users
 
 from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
 
-from data import WELCOME_MESSAGE, available_subscription_types, wait_message
+from data import WELCOME_MESSAGE, available_subscription_types, wait_message, admin_options
 
 from .states import MemberStates
 
@@ -45,8 +45,8 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
         # ! Admin logic
         # TODO work in progress
         await message.answer(
-            text="Hello, you are a admin!",
-            reply_markup=ReplyKeyboardRemove())
+            text="Hello, Admin! Choose an option:",
+            reply_markup=make_vertical_reply_keyboard(admin_options))
 
         await state.set_state(MemberStates.admin_member) # ? set the state to admin_member
     

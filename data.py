@@ -66,6 +66,8 @@ cancel_subscription_confirmation_messages = ["Yes, cancel my subscription", "No,
 
 wait_message = "Checking status of your account. Please wait..."
 
+admin_options = ["Add member", "Kick member"]
+
 available_subscription_types = [subscription["button_text"] for subscription in subscriptions]
 available_subscription_types.append(confirmation_messages[1])
 

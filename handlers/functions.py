@@ -34,6 +34,28 @@ async def user_exists(telegram_id: int, session: AsyncSession, Users: Users) -> 
     except Exception as e:
         print("function user_exists ERROR", e)
 
+async def create_new_user(telegram_id: int, sub_duration:int, session: AsyncSession, Users: Users) -> None:
+    """
+    Description:
+        create a new user in the database
+    Params: 
+        telegram_id (int): telegram_id of the user
+        sub_duration (int): subscription duration for the user
+        session (AsyncSession): AsyncSession object
+        User (User): User model
+    Returns:
+        None
+    """
+    try:
+        # calculate valid_until date
+        valid_until = datetime.utcnow() + timedelta(days=sub_duration)
+        # create a new user
+        new_user = Users(telegram_id=telegram_id, payment_method='coinbase', subscription_id='null', valid_until=valid_until)
+        session.add(new_user)
+        await session.commit()
+    except Exception as e:
+        print("function create_new_user ERROR", e)
+
 async def can_generate_invite_link(telegram_id: int, session: AsyncSession, Users: Users) -> bool:
     """
     Description:

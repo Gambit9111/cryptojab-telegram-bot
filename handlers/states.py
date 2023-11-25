@@ -3,6 +3,8 @@ from aiogram.fsm.state import StatesGroup, State
 class MemberStates(StatesGroup):
     
     admin_member = State()
+    admin_member_add_user = State()
+    admin_member_kick_user = State()
     
     new_member_choose_subscription_type = State()
     new_member_choose_payment_method = State()
