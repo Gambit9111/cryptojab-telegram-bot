@@ -11,6 +11,7 @@ async def set_ui_commands(bot: Bot):
         BotCommand(command="start", description="Start the bot to purchase subscription to VIP channel"),
         BotCommand(command="join", description="Get the invite link to VIP channel after your payment has been confirmed"),
         BotCommand(command="status", description="Check the status of your subscription"),
+        BotCommand(command="help", description="Reach out to the support team"),
         BotCommand(command="cancel", description="Cancel current action"),
     ]
     await bot.set_my_commands(

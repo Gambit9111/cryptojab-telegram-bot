@@ -7,6 +7,7 @@ DB_URL = os.getenv("DB_URL")
 TELEGRAM_WEBHOOK_URL = os.getenv("TELEGRAM_WEBHOOK_URL")
 TELEGRAM_WEBHOOK_SECRET = os.getenv("TELEGRAM_WEBHOOK_SECRET")
 TELEGRAM_ADMIN_ID = os.getenv("TELEGRAM_ADMIN_ID")
+TELEGRAM_ADMIN_USERNAME = os.getenv("TELEGRAM_ADMIN_USERNAME")
 WEB_SERVER_HOST = os.getenv("WEB_SERVER_HOST")
 WEB_SERVER_PORT = os.getenv("WEB_SERVER_PORT")
 STRIPE_PRODUCT_1_ID = os.getenv("STRIPE_PRODUCT_1_ID")
@@ -29,6 +30,8 @@ elif TELEGRAM_WEBHOOK_SECRET is None:
     raise ValueError("Please set TELEGRAM_WEBHOOK_SECRET environment variable")
 elif TELEGRAM_ADMIN_ID is None:
     raise ValueError("Please set TELEGRAM_ADMIN_ID environment variable")
+elif TELEGRAM_ADMIN_USERNAME is None:
+    raise ValueError("Please set TELEGRAM_ADMIN_USERNAME environment variable")
 elif WEB_SERVER_HOST is None:
     raise ValueError("Please set WEB_SERVER_HOST environment variable")
 elif WEB_SERVER_PORT is None:

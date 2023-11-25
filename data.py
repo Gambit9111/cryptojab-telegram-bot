@@ -56,7 +56,7 @@ payments = [
     {
         "id": 2,
         "name": "Coinbase",
-        "button_text": "Coinbase (Crypto)",
+        "button_text": "Crypto",
     }
 ]
 

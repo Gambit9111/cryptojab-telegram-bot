@@ -13,6 +13,8 @@ from .states import MemberStates
 
 from .checkout import create_checkout_session
 
+from config import TELEGRAM_ADMIN_USERNAME
+
 
 
 router = Router(name="new-member-router")
@@ -45,8 +47,8 @@ async def payment_method_choosen(message: Message, state: FSMContext):
     subscription_type = state_data.get("subscription_type")
     payment_method = state_data.get("payment_method")
 
-    if payment_method == "Coinbase (Crypto)":
-        await message.answer(text="Automated crypto payments are not supported yet, please contact administration if you wish to pay in cryptocurrencies...", reply_markup=ReplyKeyboardRemove())
+    if payment_method == "Crypto":
+        await message.answer(text=f"Automated crypto payments are not supported yet, please contact administration if you wish to pay in cryptocurrencies {TELEGRAM_ADMIN_USERNAME}", reply_markup=ReplyKeyboardRemove())
         await state.clear()
     else:
         # send user a message with his subscription type and payment method

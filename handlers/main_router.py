@@ -16,6 +16,8 @@ from .states import MemberStates
 
 from .functions import user_exists, can_generate_invite_link, generate_invite_link, get_sub_duration, is_admin
 
+from config import TELEGRAM_ADMIN_USERNAME
+
 import asyncio
 
 router = Router(name="main-router")
@@ -123,3 +125,17 @@ async def cmd_status(message: Message, session: AsyncSession, state: FSMContext,
         
         await message.answer("You do not have active subscription! Please /start the bot to purchase one.", reply_markup=ReplyKeyboardRemove())
         return
+
+
+# ! /help
+@router.message(Command("help"))
+@router.message(F.text.casefold() == "help")
+async def cmd_help(message: Message, state: FSMContext) -> None:
+    """
+    Send help message to the user
+    """
+    await state.clear()
+    await message.answer(
+        f"If you have any questions or wish to pay with crypto, please contact our support team: {TELEGRAM_ADMIN_USERNAME}",
+        reply_markup=ReplyKeyboardRemove(),
+    )
