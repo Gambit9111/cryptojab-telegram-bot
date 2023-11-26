@@ -79,7 +79,7 @@ async def confirm_payment(message: Message, state: FSMContext, bot: Bot):
     await state.clear()
 
     # delete the checkout url after 1min
-    await asyncio.sleep(60)
+    await asyncio.sleep(30)
     await bot.delete_message(chat_id=checkout_message.chat.id, message_id=checkout_message.message_id)
     await message.answer(text="Type /join to get the invite link after your payment has been confirmed!", reply_markup=ReplyKeyboardRemove())
 
