@@ -7,6 +7,7 @@ async-timeout==4.0.3
 attrs==23.1.0
 certifi==2023.11.17
 charset-normalizer==3.3.2
+coinbase-commerce==1.0.1
 frozenlist==1.4.0
 greenlet==3.0.1
 idna==3.4
@@ -15,9 +16,14 @@ multidict==6.0.4
 psycopg==3.1.13
 psycopg-binary==3.1.13
 psycopg-pool==3.2.0
+psycopg2-binary==2.9.9
 pydantic==2.3.0
 pydantic_core==2.6.3
 python-dotenv==1.0.0
+requests==2.31.0
+six==1.16.0
 SQLAlchemy==2.0.23
+stripe==7.5.0
 typing_extensions==4.7.1
+urllib3==2.1.0
 yarl==1.9.2
