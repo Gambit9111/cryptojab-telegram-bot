@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models import Users
 from aiogram import Bot
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from config import TELEGRAM_PREMIUM_CHANNEL_ID, TELEGRAM_ADMIN_ID
 
@@ -48,7 +48,8 @@ async def create_new_user(telegram_id: int, sub_duration:int, session: AsyncSess
     """
     try:
         # calculate valid_until date
-        valid_until = datetime.utcnow() + timedelta(days=sub_duration)
+        valid_until = datetime.now(timezone.utc) + timedelta(days=sub_duration)
+        print("valid until-----------------", valid_until)
         # create a new user
         new_user = Users(telegram_id=telegram_id, payment_method='coinbase', subscription_id='null', valid_until=valid_until)
         session.add(new_user)

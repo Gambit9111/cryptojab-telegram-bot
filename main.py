@@ -46,7 +46,7 @@ def main() -> None:
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",)
 
-    engine = create_async_engine(DB_URL, echo=True)
+    engine = create_async_engine(DB_URL, echo=True, connect_args={"options": "-c timezone=utc"})
     sessionmaker = async_sessionmaker(engine, expire_on_commit=False)
     
     bot = Bot(token=TELEGRAM_BOT_TOKEN, parse_mode="HTML")
