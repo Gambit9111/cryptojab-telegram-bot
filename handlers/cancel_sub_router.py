@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from aiogram.fsm.context import FSMContext
 
-from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
+from keyboards.vertical_reply_kb import make_vertical_reply_keyboard
 
 from data import confirmation_messages, cancel_subscription_confirmation_messages
 

@@ -6,6 +6,7 @@ import asyncio
 from aiogram.fsm.context import FSMContext
 
 from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
+from keyboards.link_button import make_link_button
 
 from data import available_subscription_types, available_payment_methods, confirmation_messages
 
@@ -75,7 +76,7 @@ async def confirm_payment(message: Message, state: FSMContext, bot: Bot):
         
     await message.answer(text="Selection confirmed, generating payment link...", reply_markup=ReplyKeyboardRemove())
     checkout_url = await create_checkout_session(message.from_user.id, subscription_type, payment_method)
-    checkout_message = await message.answer(text=f"Checkout url {checkout_url}")
+    checkout_message = await message.answer(text='Please click the button below to proceed to payment', reply_markup=make_link_button("Proceed to payment", checkout_url))
     await state.clear()
 
     # delete the checkout url after 1min

@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.models import Users
 
 from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
+from keyboards.link_button import make_link_button
 
 from data import WELCOME_MESSAGE, available_subscription_types, wait_message, admin_options
 
@@ -88,8 +89,8 @@ async def cmd_join(message: Message, session: AsyncSession, state: FSMContext, b
         
         if await can_generate_invite_link(message.from_user.id, session, Users) == True:
             invite_link = await generate_invite_link(message.from_user.id, session, Users, bot)
-            invite_link_message = await message.answer(f"Invite link created: {invite_link}", reply_markup=ReplyKeyboardRemove())
-            await asyncio.sleep(60)
+            invite_link_message = await message.answer(text=f"Click the button to join.", reply_markup=make_link_button("Join", invite_link))
+            await asyncio.sleep(30)
             # delete the message after 1min
             await bot.delete_message(chat_id=invite_link_message.chat.id, message_id=invite_link_message.message_id)
             
