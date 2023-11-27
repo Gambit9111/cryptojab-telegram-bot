@@ -73,6 +73,45 @@ NO_ACTIVE_SUBSCRIPTION_MESSAGE = "You do not have active subscription! Please /s
 HELP_COMMAND_MESSAGE = f"If you have any questions or wish to pay with crypto, please contact our support team: {TELEGRAM_ADMIN_USERNAME}"
 WAIT_MESSAGE = "Checking status of your account. Please wait..."
 
+# NEW MEMBER ROUTER ===>
+CHOOSE_PAYMENT_METHOD_MESSAGE = "Choose your payment method:"
+
+CRYPTO_PAYMENT_NOT_SUPPORTED_MESSAGE=f"Automated crypto payments are not supported yet, please contact administration if you wish to pay in cryptocurrencies {TELEGRAM_ADMIN_USERNAME}"
+def SUBSCRIPTION_SELECTION_MESSAGE(subscription_type: str, payment_method: str) -> str:
+    return f"You have chosen {subscription_type} with {payment_method} payment method"
+CONFIRM_SELECTION_MESSAGE = "Please confirm your selection"
+SELECTION_CONFIRMED_MESSAGE = "Selection confirmed, generating payment link..."
+PAYMENT_MESSAGE = "Please click the button below to proceed to payment"
+PAYMENT_BUTTON_MESSAGE = "Proceed to payment"
+PAYMENT_BUTTON_DELETE_DURATION = 30 #SEC
+AFTER_PAYMENT_JOIN_MESSAGE = "Type /join to get the invite link after your payment has been confirmed!"
+
+#CANCEL SUB ROUTER ===>
+CANCEL_SUBSCRIPTION_BUTTON_MESSAGE = "Cancel subscription"
+CANCEL_SUBSCRIPTION_CONFIRMATION_MESSAGE = "Are you sure you want to cancel your subscription? You will be kicked out of the group and will not be able to join before you purchase again."
+SUBSCRIPTION_CANCELED_MESSAGE = "Your subscription has been cancelled. Thank your for using our services!"
+SUBSCRIPTION_NOT_CANCELED_MESSAGE = "Your subscription has not been cancelled."
+
+#ADMIN ROUTER ===> 
+ADD_MEMBER_MESSAGE = "Enter the Telegram ID of the new member, Enter duration of days. In a format like this: telegram_id,days --> 12837927,90"
+KICK_MEMBER_MESSAGE = "Enter the Telegram ID of the member you want to kick"
+WRONG_FORMAT_MESSAGE = "Wrong format. Please try again"
+ADDING_MEMBER_MESSAGE = "Adding member, please wait..."
+ADDING_MEMBER_SUCCESS_MESSAGE = "Member added successfully!"
+KICKING_MEMBER_MESSSAGE = "Kicking member, please wait..."
+KICKING_MEMBER_SUCCESS_MESSAGE = "Member kicked successfully!"
+
+#CATCH ALL ROUTER ===>
+CATCH_ALL_MESSAGE = "Please /start the bot to use it"
+CATCH_ALL_WRONG_TYPE_MESSAGE = "You can only send messages to this bot"
+
+def UNKNOWN_COMMAND_ERROR_MESSAGE_DISPLAY(error: str) -> str:
+    return f"Unknown Command. {error}"
+
+UNKNOWN_COMMAND_ERROR_MESSAGES=["Please choose one of the available subscription types",
+                                "Please choose one of the available payment methods",
+                                "Please choose one of the available confirmation messages",
+                                "Please choose one of the available commands"]
 
 confirmation_messages = ["Confirm", "Cancel"]
 admin_options = ["Add member", "Kick member"]

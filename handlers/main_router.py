@@ -23,6 +23,7 @@ from data import (WELCOME_MESSAGE,
                   NO_ACTIVE_SUBSCRIPTION_MESSAGE,
                   HELP_COMMAND_MESSAGE,
                   WAIT_MESSAGE,
+                  CANCEL_SUBSCRIPTION_BUTTON_MESSAGE,
                   available_subscription_types,
                   admin_options)
 
@@ -128,7 +129,7 @@ async def cmd_status(message: Message, session: AsyncSession, state: FSMContext,
     if await user_exists(message.from_user.id, session, Users) == True:
         
         sub_duration = await get_sub_duration(message.from_user.id, session, Users)
-        await message.answer(SUB_DURATION_MESSAGE(sub_duration), reply_markup=make_vertical_reply_keyboard(["Cancel subscription"]))
+        await message.answer(SUB_DURATION_MESSAGE(sub_duration), reply_markup=make_vertical_reply_keyboard([CANCEL_SUBSCRIPTION_BUTTON_MESSAGE]))
         
         await state.set_state(MemberStates.active_member_cancel_subscription)
         

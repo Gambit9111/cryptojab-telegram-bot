@@ -12,22 +12,31 @@ from .states import MemberStates
 
 from .functions import cancel_subscription
 
+from data import (
+    CANCEL_SUBSCRIPTION_BUTTON_MESSAGE,
+    CANCEL_SUBSCRIPTION_CONFIRMATION_MESSAGE,
+    SUBSCRIPTION_CANCELED_MESSAGE,
+    SUBSCRIPTION_NOT_CANCELED_MESSAGE,
+    UNKNOWN_COMMAND_ERROR_MESSAGE_DISPLAY,
+    UNKNOWN_COMMAND_ERROR_MESSAGES,
+)
+
 from db.models import Users
 
 
 
 router = Router(name="cancel-sub-router")
 
-@router.message(MemberStates.active_member_cancel_subscription, F.text.in_(["Cancel subscription"]))
+@router.message(MemberStates.active_member_cancel_subscription, F.text.in_([CANCEL_SUBSCRIPTION_BUTTON_MESSAGE]))
 async def cancel_subscription_router(message: Message, state: FSMContext):
     
-    await message.answer(text="Are you sure you want to cancel your subscription? You will be kicked out of the group and will not be able to join before you purchase again.", reply_markup=make_vertical_reply_keyboard(cancel_subscription_confirmation_messages))
+    await message.answer(text=CANCEL_SUBSCRIPTION_CONFIRMATION_MESSAGE, reply_markup=make_vertical_reply_keyboard(cancel_subscription_confirmation_messages))
     await state.set_state(MemberStates.active_member_cancel_subscription_confirm)
 
 
 @router.message(MemberStates.active_member_cancel_subscription)
 async def cancel_subscription_unknown(message: Message):
-    await message.answer(text="Unknown Command. Please choose one of the available commands", reply_markup=make_vertical_reply_keyboard(confirmation_messages))
+    await message.answer(text=UNKNOWN_COMMAND_ERROR_MESSAGE_DISPLAY(UNKNOWN_COMMAND_ERROR_MESSAGES[3]), reply_markup=make_vertical_reply_keyboard(confirmation_messages))
 
 
 @router.message(MemberStates.active_member_cancel_subscription_confirm, F.text.in_(cancel_subscription_confirmation_messages))
@@ -35,12 +44,12 @@ async def cancel_subscription_confirmed(message: Message, session: AsyncSession,
     
     if message.text == cancel_subscription_confirmation_messages[0]:
         await cancel_subscription(message.from_user.id, session, Users, bot)
-        await message.answer(text="Your subscription has been cancelled. Thank your for using our services!", reply_markup=ReplyKeyboardRemove())
+        await message.answer(text=SUBSCRIPTION_CANCELED_MESSAGE, reply_markup=ReplyKeyboardRemove())
         await state.clear()
     
     elif message.text == cancel_subscription_confirmation_messages[1]:
-        await message.answer(text="Your subscription has not been cancelled.", reply_markup=ReplyKeyboardRemove())
+        await message.answer(text=SUBSCRIPTION_NOT_CANCELED_MESSAGE, reply_markup=ReplyKeyboardRemove())
         await state.clear()
 
     else:
-        await message.answer(text="Unknown Command. Please choose one of the available commands", reply_markup=make_vertical_reply_keyboard(cancel_subscription_confirmation_messages))
+        await message.answer(text=UNKNOWN_COMMAND_ERROR_MESSAGE_DISPLAY(UNKNOWN_COMMAND_ERROR_MESSAGES[3]), reply_markup=make_vertical_reply_keyboard(cancel_subscription_confirmation_messages))
