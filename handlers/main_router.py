@@ -11,13 +11,24 @@ from db.models import Users
 from keyboards.vertical_reply_kb import make_vertical_reply_keyboard 
 from keyboards.link_button import make_link_button
 
-from data import WELCOME_MESSAGE, available_subscription_types, wait_message, admin_options
+from data import (WELCOME_MESSAGE,
+                  CANCEL_SELECTION_MESSAGE,
+                  ADMIN_MODE_START_MESSAGE,
+                  CHOOSE_SUBSCRIPTION_TYPE_MESSAGE,
+                  PREMIUM_USER_START_MESSAGE,
+                  CHANNEL_INVITE_MESSAGE,
+                  CHANNEL_INVITE_BUTTON_MESSAGE,
+                  INVITE_LINK_ALREADY_CREATED_MESSAGE,
+                  SUB_DURATION_MESSAGE,
+                  NO_ACTIVE_SUBSCRIPTION_MESSAGE,
+                  HELP_COMMAND_MESSAGE,
+                  WAIT_MESSAGE,
+                  available_subscription_types,
+                  admin_options)
 
 from .states import MemberStates
 
 from .functions import user_exists, can_generate_invite_link, generate_invite_link, get_sub_duration, is_admin
-
-from config import TELEGRAM_ADMIN_USERNAME
 
 import asyncio
 
@@ -32,7 +43,7 @@ async def cancel_handler(message: Message, state: FSMContext) -> None:
     """
     await state.clear()
     await message.answer(
-        "Your selections was canceled, please /start again to make new selections.",
+        CANCEL_SELECTION_MESSAGE,
         reply_markup=ReplyKeyboardRemove(),
     )
 
@@ -46,7 +57,7 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
         # ! Admin logic
         # TODO work in progress
         await message.answer(
-            text="Hello, Admin! Choose an option:",
+            text=ADMIN_MODE_START_MESSAGE,
             reply_markup=make_vertical_reply_keyboard(admin_options))
 
         await state.set_state(MemberStates.admin_member) # ? set the state to admin_member
@@ -59,7 +70,7 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
             # ! New member logic
             
             await message.answer(
-                text="Choose subscription type:",
+                text=CHOOSE_SUBSCRIPTION_TYPE_MESSAGE,
                 reply_markup=make_vertical_reply_keyboard(available_subscription_types))
             
             await state.set_state(MemberStates.new_member_choose_subscription_type) # ? set the state to new_member
@@ -68,7 +79,7 @@ async def cmd_start(message: Message, session: AsyncSession, state: FSMContext) 
             # ! Active member logic
             
             await message.answer(
-                text="Hello, you are premium user! Type /status to see your subscription status. Type /join to receive invite link.",
+                text=PREMIUM_USER_START_MESSAGE,
                 reply_markup=ReplyKeyboardRemove())
             
             await state.clear()
@@ -83,13 +94,13 @@ async def cmd_join(message: Message, session: AsyncSession, state: FSMContext, b
 
     await state.clear()
     # * Send a welcome message to everyone who starts the bot
-    await message.answer(wait_message, reply_markup=ReplyKeyboardRemove())
+    await message.answer(WAIT_MESSAGE, reply_markup=ReplyKeyboardRemove())
     
     if await user_exists(message.from_user.id, session, Users) == True:
         
         if await can_generate_invite_link(message.from_user.id, session, Users) == True:
             invite_link = await generate_invite_link(message.from_user.id, session, Users, bot)
-            invite_link_message = await message.answer(text=f"Click the button to join.", reply_markup=make_link_button("Join", invite_link))
+            invite_link_message = await message.answer(text=CHANNEL_INVITE_MESSAGE, reply_markup=make_link_button(CHANNEL_INVITE_BUTTON_MESSAGE, invite_link))
             await asyncio.sleep(30)
             # delete the message after 1min
             await bot.delete_message(chat_id=invite_link_message.chat.id, message_id=invite_link_message.message_id)
@@ -97,12 +108,12 @@ async def cmd_join(message: Message, session: AsyncSession, state: FSMContext, b
             
         
         else:
-            await message.answer("You already created an invite link, can only do that once! Type /status to see your subscription status.", reply_markup=ReplyKeyboardRemove())
+            await message.answer(INVITE_LINK_ALREADY_CREATED_MESSAGE, reply_markup=ReplyKeyboardRemove())
             return
         
     else:
         
-        await message.answer("You do not have active subscription! Please /start the bot to purchase one.", reply_markup=ReplyKeyboardRemove())
+        await message.answer(NO_ACTIVE_SUBSCRIPTION_MESSAGE, reply_markup=ReplyKeyboardRemove())
         return
 
 # ! /status
@@ -112,19 +123,19 @@ async def cmd_status(message: Message, session: AsyncSession, state: FSMContext,
 
     await state.clear()
     # * Send a welcome message to everyone who starts the bot
-    await message.answer(wait_message, reply_markup=ReplyKeyboardRemove())
+    await message.answer(WAIT_MESSAGE, reply_markup=ReplyKeyboardRemove())
 
     if await user_exists(message.from_user.id, session, Users) == True:
         
         sub_duration = await get_sub_duration(message.from_user.id, session, Users)
-        await message.answer(f"Your subscription will end in {sub_duration} days", reply_markup=make_vertical_reply_keyboard(["Cancel subscription"]))
+        await message.answer(SUB_DURATION_MESSAGE(sub_duration), reply_markup=make_vertical_reply_keyboard(["Cancel subscription"]))
         
         await state.set_state(MemberStates.active_member_cancel_subscription)
         
         
     else:
         
-        await message.answer("You do not have active subscription! Please /start the bot to purchase one.", reply_markup=ReplyKeyboardRemove())
+        await message.answer(NO_ACTIVE_SUBSCRIPTION_MESSAGE, reply_markup=ReplyKeyboardRemove())
         return
 
 
@@ -137,6 +148,6 @@ async def cmd_help(message: Message, state: FSMContext) -> None:
     """
     await state.clear()
     await message.answer(
-        f"If you have any questions or wish to pay with crypto, please contact our support team: {TELEGRAM_ADMIN_USERNAME}",
+        HELP_COMMAND_MESSAGE,
         reply_markup=ReplyKeyboardRemove(),
     )
