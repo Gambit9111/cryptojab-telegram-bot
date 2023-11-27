@@ -20,6 +20,7 @@ from config import (
 from handlers import main_router, new_member_router, catch_all_router, cancel_sub_router, admin_router
 from middlewares import DbSessionMiddleware
 from ui_commands import set_ui_commands
+from description import set_description
 
 
 async def on_startup(bot: Bot) -> None:
@@ -28,6 +29,7 @@ async def on_startup(bot: Bot) -> None:
     webhook_info = await bot.get_webhook_info()
     # Set bot commands in UI
     await set_ui_commands(bot)
+    await set_description(bot)
     await bot.send_message(chat_id=TELEGRAM_ADMIN_ID, text="Bot is starting")
     print("**************__Initializing the bot__**************\n")
     print("**************__Bot info__**************\n")
