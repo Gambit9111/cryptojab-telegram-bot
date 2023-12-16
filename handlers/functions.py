@@ -157,20 +157,22 @@ async def cancel_subscription(telegram_id: int, session: AsyncSession, Users: Us
         sql = select(Users).where(Users.telegram_id == telegram_id)
         result = await session.execute(sql)
         user: Users = result.scalars().first()
-        
+    
         # cancel subscription in stripe
         if user.payment_method == "stripe":
             stripe.Subscription.delete(user.subscription_id)
         
-        await bot.unban_chat_member(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, user_id=telegram_id)
         # delete user from the database
         await session.delete(user)
         await session.commit()
-        
-        await bot.send_message(chat_id=TELEGRAM_ADMIN_ID, text=f"User with telegram_id {telegram_id} canceled his subscription")
-        
+    
     except Exception as e:
-        print("function generate_invite_link ERROR", e)
+        print("function cancel_subscription ERROR", e)
+
+
+    await bot.unban_chat_member(chat_id=TELEGRAM_PREMIUM_CHANNEL_ID, user_id=telegram_id)
+    await bot.send_message(chat_id=TELEGRAM_ADMIN_ID, text=f"User with telegram_id {telegram_id} canceled his subscription")
+        
 
 def is_admin(telegram_id: str) -> bool:
     """
