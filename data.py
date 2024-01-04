@@ -24,10 +24,10 @@ subscriptions = [
     },
     {
         "id": 4,
-        "price": 15,
-        "duration": 1,
+        "price": 25,
+        "duration": 3,
         "stripe_product_id": STRIPE_PRODUCT_4_ID,
-        "button_text": "1 Days (15$)",
+        "button_text": "3 Days (25$)",
     },
 ]
 
