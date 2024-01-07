@@ -28,8 +28,8 @@ async def on_startup(bot: Bot) -> None:
     bot_info = await bot.get_me()
     webhook_info = await bot.get_webhook_info()
     # Set bot commands in UI
-    await set_ui_commands(bot)
-    await set_description(bot)
+    # await set_ui_commands(bot)
+    # await set_description(bot)
     await bot.send_message(chat_id=TELEGRAM_ADMIN_ID, text="Bot is starting")
     print("**************__Initializing the bot__**************\n")
     print("**************__Bot info__**************\n")
