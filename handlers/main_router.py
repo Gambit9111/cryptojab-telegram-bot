@@ -101,9 +101,10 @@ async def cmd_join(message: Message, session: AsyncSession, state: FSMContext, b
         
         if await can_generate_invite_link(message.from_user.id, session, Users) == True:
             invite_link = await generate_invite_link(message.from_user.id, session, Users, bot)
-            invite_link_message = await message.answer(invite_link)
-            # invite_link_message = await message.answer(text=CHANNEL_INVITE_MESSAGE, reply_markup=make_link_button(CHANNEL_INVITE_BUTTON_MESSAGE, invite_link))
-            await asyncio.sleep(30)
+            # invite_link_message = await message.answer(invite_link)
+            await message.answer(text="The invite link will expire in 60 seconds, please join now !")
+            invite_link_message = await message.answer(text=CHANNEL_INVITE_MESSAGE, reply_markup=make_link_button(CHANNEL_INVITE_BUTTON_MESSAGE, invite_link))
+            await asyncio.sleep(60)
             # delete the message after 1min
             await bot.delete_message(chat_id=invite_link_message.chat.id, message_id=invite_link_message.message_id)
             
