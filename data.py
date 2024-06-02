@@ -3,32 +3,20 @@ from config import STRIPE_PRODUCT_1_ID, STRIPE_PRODUCT_2_ID, STRIPE_PRODUCT_3_ID
 subscriptions = [
     {
         "id": 1,
-        "price": 70,
+        "price": 25,
         "duration": 30,
         "stripe_product_id": STRIPE_PRODUCT_1_ID,
-        "button_text": "30 Days (70$)",
+        "button_text": "30 Days (25$)",
     },
     {
         "id": 2,
-        "price": 160,
-        "duration": 90,
-        "stripe_product_id": STRIPE_PRODUCT_2_ID,
-        "button_text": "90 Days (160$)",
-    },
-    {
-        "id": 3,
-        "price": 420,
+        "price": 180,
         "duration": 365,
-        "stripe_product_id": STRIPE_PRODUCT_3_ID,
-        "button_text": "365 Days (420$)",
+        "stripe_product_id": STRIPE_PRODUCT_2_ID,
+        "button_text": "365 Days (180$)",
     },
-    {
-        "id": 4,
-        "price": 25,
-        "duration": 3,
-        "stripe_product_id": STRIPE_PRODUCT_4_ID,
-        "button_text": "3 Days (25$)",
-    },
+    
+
 ]
 
 payments = [
