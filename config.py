@@ -38,10 +38,6 @@ elif STRIPE_PRODUCT_1_ID is None:
     raise ValueError("Please set STRIPE_PRODUCT_1_ID environment variable")
 elif STRIPE_PRODUCT_2_ID is None:
     raise ValueError("Please set STRIPE_PRODUCT_2_ID environment variable")
-elif STRIPE_PRODUCT_3_ID is None:
-    raise ValueError("Please set STRIPE_PRODUCT_3_ID environment variable")
-elif STRIPE_PRODUCT_4_ID is None:
-    raise ValueError("Please set STRIPE_PRODUCT_4_ID environment variable")
 elif STRIPE_API_KEY is None:
     raise ValueError("Please set STRIPE_API_KEY environment variable")
 elif STRIPE_CHECKOUT_SUCCESS_URL is None:
